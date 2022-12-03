@@ -87,12 +87,33 @@ def obtener_sub_carpetas():
 
 
 def entrenamiento(request):
+        msg = ""
+        nombre = ""
+        estado_hoja = ""
+        cadena = ""
         
+        ret_data = {}
         if request.method == 'POST':
-                msg = 'hola'
-        else:
-                msg = 'adios' 
                 
+                if request.FILES.get('archivo') == None:
+                        ret_data['validacion_archivo'] = 'Debe cargar el conjunto de datos de su planta'
+                else:
+                        ret_data['identificacion'] = identificar_enfermedad(request.FILES.get("imagen"))
+                        
+                if request.POST.get("nombre") == '':
+                        ret_data['validacion_nombre'] = 'Debe ingresar el nombre de la planta'
+                else:
+                        nombre = request.POST.get("nombre").lower()
+                        
+                        
+                if request.POST.get("salud") == '1':
+                        estado_hoja = "hoja_sana"
+                else:
+                        estado_hoja = "hoja_enferma"
+
+                                
+                cadena = nombre + '_' + estado_hoja   
+
                 
-        data = {'msg':msg}
+        data = {'data':ret_data}
         return render(request, 'entrenamiento.html',data)

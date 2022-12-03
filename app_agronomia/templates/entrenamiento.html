@@ -11,8 +11,63 @@
     <div class="bg-light p-3 pt-5 rounded">
         <h1>Entrenamiento de estado de salud </h1>
         <p class="lead">Cargue un archivo tipo <strong>.rar</strong> para el entrenamiento.</p>
-    <p><strong>Etiquetas/cultivos agregados: </strong>
-        
+    <p><strong>Registre los parámetro necesarios: </strong>
+
+        <form method="POST" action="{% url 'app_agronomia:entrenamiento' %}" enctype="multipart/form-data" onsubmit="btn_enviar.disabled = true; return true;">
+            {% csrf_token %}
+
+
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="mb-3 mt-4">
+                        <label for="formFile" class="form-label">Ingrese el nombre de la planta (Sin acento)</label>
+                        <input class="form-control" type="text" id="nombre" name="nombre" placeholder="Ejemplo: Fresa">
+                
+                        {% if data.validacion_nombre %}
+                            <div class="alert alert-danger mt-2" role="alert">
+                            <strong>Error: </strong> {{ data.validacion_nombre }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3 mt-4">
+                        <label for="formFile" class="form-label">Seleccione la salud de su hoja</label>
+                        <select name="salud" id="salud" class="form-control">
+                            <option value="1">Saludable</option>
+                            <option value="2">Enferma</option>
+                        </select>
+                
+
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="row">
+                <div class="mb-3 mt-2">
+                    <label for="formFile" class="form-label">Cargue el archivo RAR</label>
+                    <input class="form-control" type="file" id="archivo" name="archivo" accept=".rar">
+            
+                    {% if data.validacion_archivo %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                        <strong>Error: </strong> {{ data.validacion_archivo }}
+                        </div>
+                    {% endif %}
+            
+                    </div>
+            </div>
+
+
+
+
+    
+            <button type="submit" class="btn btn-primary mt-3" id="btn_enviar" name="btn_enviar">
+                <i class="fa-solid fa-code-branch"></i> Entrenar
+            </button>
+        </form>
 
 
     </div>
