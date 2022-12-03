@@ -3,7 +3,11 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
+from tensorflow.keras import layers
+from tensorflow.keras.models import Sequential
+
 import os
+import patoolib
 # Create your views here.
 
 
@@ -69,7 +73,7 @@ def identificar_enfermedad(photo):
                 
         except Exception as e:
                 msg = 'Error: ' + str(e)
-                
+                print(text)
 
         return {'tipo_hoja': text.split("_")[0].capitalize(), 'estado_hoja': msg}
 
@@ -95,10 +99,10 @@ def entrenamiento(request):
         ret_data = {}
         if request.method == 'POST':
                 
-                if request.FILES.get('archivo') == None:
+                if request.FILES.getlist('imagenes') == None:
                         ret_data['validacion_archivo'] = 'Debe cargar el conjunto de datos de su planta'
                 else:
-                        ret_data['identificacion'] = identificar_enfermedad(request.FILES.get("imagen"))
+                        imagenes = request.FILES.getlist('imagenes')
                         
                 if request.POST.get("nombre") == '':
                         ret_data['validacion_nombre'] = 'Debe ingresar el nombre de la planta'
@@ -113,7 +117,85 @@ def entrenamiento(request):
 
                                 
                 cadena = nombre + '_' + estado_hoja   
+                
+
+                if 'validacion_archivo' not in ret_data  and 'validacion_nombre' not in ret_data:
+                        ret_data['status'] = entranamiento_tensorflow(cadena,imagenes)
 
                 
         data = {'data':ret_data}
         return render(request, 'entrenamiento.html',data)
+
+
+
+def entranamiento_tensorflow(cadena,imagenes):
+        status = True
+        try:
+                directorio = "C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/Cultivo/"+cadena
+                os.mkdir(directorio)
+                
+                for img in imagenes:
+                        with open(directorio +'/'+ str(img), 'wb') as dest:
+                                for chunk in img.chunks():
+                                        dest.write(chunk)
+                                        
+                                        
+                                        
+                if os.path.exists("C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/my_h5_model.h5"):
+                        os.remove('C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/my_h5_model.h5') 
+                        
+                                             
+                train_ds = tf.keras.utils.image_dataset_from_directory(
+                        "app_agronomia/IA/Cultivo",
+                        validation_split=0.2,
+                        subset="training",
+                        seed=123,
+                        image_size=(180, 180),
+                        batch_size=32)
+                                       
+                class_names = train_ds.class_names
+                
+                normalization_layer = layers.Rescaling(1./255)
+                normalized_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
+                image_batch, labels_batch = next(iter(normalized_ds))
+                first_image = image_batch[0]
+                
+                #Creacion del modelo
+                num_classes = len(class_names)
+
+                model = Sequential([
+                layers.Rescaling(1./255, input_shape=(180, 180, 3)),
+                layers.Conv2D(16, 3, padding='same', activation='relu'),
+                layers.MaxPooling2D(),
+                layers.Conv2D(32, 3, padding='same', activation='relu'),
+                layers.MaxPooling2D(),
+                layers.Conv2D(64, 3, padding='same', activation='relu'),
+                layers.MaxPooling2D(),
+                layers.Flatten(),
+                layers.Dense(128, activation='relu'),
+                layers.Dense(num_classes)
+                ])
+
+                #Complicacion y optimizacion del modelo
+                model.compile(optimizer='adam',
+                        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+                        metrics=['accuracy'])
+
+                model.summary()
+
+                #Entranamiento del modelo y numero de ciclos
+                epochs=30
+                history = model.fit(
+                train_ds,
+                epochs=epochs
+                )
+
+                model.save("C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/my_h5_model.h5")
+                
+                
+                status = True
+        except Exception as e:
+                status = False
+
+        return status
+        
