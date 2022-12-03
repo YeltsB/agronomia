@@ -9,7 +9,7 @@ import os
 
 def inicio(request):
         
-        msg = 'Imagen no cargada'
+        ret_data = {}
         validacion = ''
         
         if request.method == 'POST':
@@ -17,7 +17,7 @@ def inicio(request):
                 if request.FILES.get('imagen') == None:
                         validacion = 'Debe cargar la imagen'
                 else:
-                        msg = identificar_enfermedad(request.FILES.get("imagen"))
+                        ret_data['identificacion'] = identificar_enfermedad(request.FILES.get("imagen"))
                         
                         
                         
@@ -25,9 +25,9 @@ def inicio(request):
         sub_carpetas = [name for name in os.listdir(carpeta) if os.path.isdir(os.path.join(carpeta, name))]
         
         
-        print(sub_carpetas)
-        data = {'resultado':msg, 'validacion': validacion,
-                'sub_carpetas': sub_carpetas}
+       
+        data = {'resultado':ret_data, 'validacion': validacion,
+                'sub_carpetas': sub_carpetas,}
         return render(request, 'inicio.html',data)
 
 
@@ -64,15 +64,16 @@ def identificar_enfermedad(photo):
                 score = tf.nn.softmax(predictions[0])
                 text = class_names[np.argmax(score)]
                 
-                if  text == "hoja_sana":
-                        msg = "La hoja que ha ingresado esta sana"
+                if "hoja_sana" in text:
+                        msg = "hoja_sana"
                 else:
-                        msg = "La hoja que ha ingresado esta enferma"
+                        msg = "hoja_enferma"
         
 
                 msg = msg
                 
         except Exception as e:
                 msg = 'Error: ' + str(e)
+                
 
-        return msg
+        return {'tipo_hoja': text.split("_")[0].capitalize(), 'estado_hoja': msg}

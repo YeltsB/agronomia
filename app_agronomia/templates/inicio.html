@@ -38,15 +38,17 @@
     </form>
 
         <div class="alert alert-success mt-5" role="alert">
-            <h4 class="alert-heading"><strong>RESULTADO</strong></h4>
+            <h4 class="alert-heading"><strong>RESULTADO: {{ resultado.identificacion.tipo_hoja }}</strong></h4>
             <hr>
 
-                {% if resultado == 'La hoja que ha ingresado esta sana'   %} 
-                    <p class="mb-0"><span class="badge bg-success">{{ resultado }}</span></p>
-                {% elif resultado == 'La hoja que ha ingresado esta enferma' %}
-                    <p class="mb-0"><span class="badge bg-danger">{{ resultado }}</span></p>
+                {% if resultado.identificacion.estado_hoja == 'hoja_sana'   %} 
+                    <p class="mb-0"><span class="badge bg-success">La hoja que ha cargado esta sana</span></p>
+
+                {% elif resultado.identificacion.estado_hoja == 'hoja_enferma' %}
+                    <p class="mb-0"><span class="badge bg-danger">La hoja que ha cargado esta enferma</span></p>
+
                 {% else %}
-                    <p class="mb-0"><span class="badge bg-secondary">{{ resultado }}</span></p>
+                    <p class="mb-0"><span class="badge bg-secondary">Imagen no cargada</span></p>
                 {% endif %}
 
         </div>
