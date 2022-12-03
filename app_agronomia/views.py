@@ -83,3 +83,16 @@ def obtener_sub_carpetas():
                 sub_carpetas = 'Error al obtener las carpetas'
                 
         return sub_carpetas
+
+
+
+def entrenamiento(request):
+        
+        if request.method == 'POST':
+                msg = 'hola'
+        else:
+                msg = 'adios' 
+                
+                
+        data = {'msg':msg}
+        return render(request, 'entrenamiento.html',data)

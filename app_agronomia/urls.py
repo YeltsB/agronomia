@@ -5,4 +5,6 @@ app_name = 'app_agronomia' #El nombre de nuestra aplicacio
 urlpatterns = [
     path("", inicio, name="inicio"),
     path("identificar_enfermedad", identificar_enfermedad, name="identificar_enfermedad"),
+    path("entrenamiento", entrenamiento, name="entrenamiento"),
+    
 ]
