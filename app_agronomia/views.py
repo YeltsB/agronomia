@@ -20,14 +20,9 @@ def inicio(request):
                         ret_data['identificacion'] = identificar_enfermedad(request.FILES.get("imagen"))
                         
                         
-                        
-        carpeta = 'C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/Cultivo'               
-        sub_carpetas = [name for name in os.listdir(carpeta) if os.path.isdir(os.path.join(carpeta, name))]
-        
-        
-       
+
         data = {'resultado':ret_data, 'validacion': validacion,
-                'sub_carpetas': sub_carpetas,}
+                'sub_carpetas': obtener_sub_carpetas(),}
         return render(request, 'inicio.html',data)
 
 
@@ -77,3 +72,14 @@ def identificar_enfermedad(photo):
                 
 
         return {'tipo_hoja': text.split("_")[0].capitalize(), 'estado_hoja': msg}
+
+
+
+def obtener_sub_carpetas():
+        try:                
+                carpeta = 'C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/Cultivo'               
+                sub_carpetas = [name for name in os.listdir(carpeta) if os.path.isdir(os.path.join(carpeta, name))]
+        except Exception as e:
+                sub_carpetas = 'Error al obtener las carpetas'
+                
+        return sub_carpetas
