@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+
+
+{% endblock head %}
+
+
+{% block content %}
+
+    <div class="bg-light p-3 pt-5 rounded">
+        <h1>Cargar Imagen </h1>
+        <p class="lead">Cargue una imagen para identificar si una planta esta enferma.</p>
+    <p><strong>Cultivos agregados: </strong><span class="badge bg-success">Maíz</span></p>
+    <form method="POST" action="{% url 'app_agronomia:inicio' %}" enctype="multipart/form-data" onsubmit="btn_enviar.disabled = true; return true;">
+        {% csrf_token %}
+        <div class="mb-3 mt-5">
+        <label for="formFile" class="form-label">Seleccione una imagen</label>
+        <input class="form-control" type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
+
+        {% if validacion %}
+            <div class="alert alert-danger mt-2" role="alert">
+            <strong>Error: </strong> {{validacion}}
+            </div>
+        {% endif %}
+
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="btn_enviar" name="btn_enviar">
+            <i class="fa-solid fa-magnifying-glass"></i> Identificar
+        </button>
+    </form>
+
+        <div class="alert alert-success mt-5" role="alert">
+            <h4 class="alert-heading"><strong>RESULTADO</strong></h4>
+            <hr>
+
+                {% if resultado == 'La hoja que ha ingresado esta sana'   %} 
+                    <p class="mb-0"><span class="badge bg-success">{{ resultado }}</span></p>
+                {% elif resultado == 'La hoja que ha ingresado esta enferma' %}
+                    <p class="mb-0"><span class="badge bg-danger">{{ resultado }}</span></p>
+                {% else %}
+                    <p class="mb-0"><span class="badge bg-secondary">{{ resultado }}</span></p>
+                {% endif %}
+
+        </div>
+
+    </div>
+{% endblock content %}
+
