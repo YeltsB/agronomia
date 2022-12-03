@@ -11,7 +11,13 @@
     <div class="bg-light p-3 pt-5 rounded">
         <h1>Cargar Imagen </h1>
         <p class="lead">Cargue una imagen para identificar si una planta esta enferma.</p>
-    <p><strong>Cultivos agregados: </strong><span class="badge bg-success">Maíz</span></p>
+    <p><strong>Etiquetas/cultivos agregados: </strong>
+
+        {% for carpeta in sub_carpetas %}
+            <span class="badge bg-success">{{carpeta}}</span>
+        {% endfor %}
+        
+    </p>
     <form method="POST" action="{% url 'app_agronomia:inicio' %}" enctype="multipart/form-data" onsubmit="btn_enviar.disabled = true; return true;">
         {% csrf_token %}
         <div class="mb-3 mt-5">

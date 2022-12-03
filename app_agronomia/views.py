@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
-
+import os
 # Create your views here.
 
 
@@ -18,8 +18,16 @@ def inicio(request):
                         validacion = 'Debe cargar la imagen'
                 else:
                         msg = identificar_enfermedad(request.FILES.get("imagen"))
-                
-        data = {'resultado':msg, 'validacion': validacion}
+                        
+                        
+                        
+        carpeta = 'C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/Cultivo'               
+        sub_carpetas = [name for name in os.listdir(carpeta) if os.path.isdir(os.path.join(carpeta, name))]
+        
+        
+        print(sub_carpetas)
+        data = {'resultado':msg, 'validacion': validacion,
+                'sub_carpetas': sub_carpetas}
         return render(request, 'inicio.html',data)
 
 
