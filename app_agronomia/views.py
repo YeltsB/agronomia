@@ -200,3 +200,18 @@ def entranamiento_tensorflow(cadena,imagenes):
 
         return status
         
+        
+def asignacion_enfermedad(request):
+        ret_data = {}
+        validacion = ''
+        
+        if request.method == 'POST':
+                pass
+                        
+        data = {'resultado':"ret_data"}
+        return render(request, 'asignacion_enfermedad.html',data)  
+        
+ #==============================POST==================================================# 
+ 
+ 
+       

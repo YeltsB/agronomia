@@ -6,5 +6,6 @@ urlpatterns = [
     path("", inicio, name="inicio"),
     path("identificar_enfermedad", identificar_enfermedad, name="identificar_enfermedad"),
     path("entrenamiento", entrenamiento, name="entrenamiento"),
-    
+    path("asignacion_enfermedad", asignacion_enfermedad, name="asignacion_enfermedad")
+
 ]
