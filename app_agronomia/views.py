@@ -36,6 +36,7 @@ def inicio(request):
 
 def identificar_enfermedad(photo):
         msg = ''
+        text = ''
         try:
                 myfile = photo.read()
                 image = cv2.imdecode(np.frombuffer(myfile, np.uint8), cv2.IMREAD_UNCHANGED)
@@ -73,7 +74,7 @@ def identificar_enfermedad(photo):
                 
         except Exception as e:
                 msg = 'Error: ' + str(e)
-                print(text)
+                #print(text)
 
         return {'tipo_hoja': text.split("_")[0].capitalize(), 'estado_hoja': msg}
 
