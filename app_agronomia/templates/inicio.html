@@ -44,17 +44,26 @@
                 {% if resultado.identificacion.estado_hoja == 'hoja_sana'   %}
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <center>
+                            <h4>Imagen cargada</h4>
+                            <img src="data:image/jpg;base64,{{ resultado.identificacion.imagen_cargada }}" class="img-fluid" alt="carga_salud"/>
+                        </center>
+                    </div>
+                    <div class="col-md-3">
+                        <center>
+                            <h4>Imagen de referencia</h4>
                             <img src="data:image/jpg;base64,{{ resultado.identificacion.img64 }}" class="img-fluid" alt="salud"/>
                         </center>
                     </div>
                     <div class="col-md-6">
                         <center>
                             <h3 class="mb-0">Estado de la planta: <span class="badge bg-success">Saludable</span></h3>
+                        </center>
+                            <hr>
                             <h3 class="mb-0"><strong>Descripción</strong></h3>
                             <h4 class="mb-0">{{ resultado.identificacion.planta.descripcion }}</h4>
-                        </center>
+      
                     </div>
                 </div>
 
@@ -62,18 +71,38 @@
 
                 {% elif resultado.identificacion.estado_hoja == 'hoja_enferma' %}
                 <div class="row ">
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <center>
+                            <h4>Imagen cargada</h4>
+                            <img src="data:image/jpg;base64,{{ resultado.identificacion.imagen_cargada }}" class="img-fluid" alt="carga_enferma"/>
+                        </center>
+                    </div>
+                    <div class="col-md-3">
+                        <center>
+                            <h4>Imagen de referencia</h4>
                             <img src="data:image/jpg;base64,{{ resultado.identificacion.img64 }}" class="img-fluid" alt="enferma"/>
                         </center>
                     </div>
                     <div class="col-md-6">
                         <center>
-                            <h3 class="mb-0">Estado de la planta: <span class="badge bg-danger">Enferma</span></h3>
-                            <h3 class="mb-0">Enfermedad: <span class="badge bg-danger">{{ resultado.identificacion.enfermedad.nombre }}</span></h3>
+                            <table style="width:100%">
+                                <tr>
+                                    <td><h3 class="mb-0">Estado de la planta: </h3> </td>
+                                    <td><h3><span class="badge bg-danger">Enferma</span></h3></td>
+                                </tr>
+                                <tr>
+                                    <td><h3 class="mb-0">Enfermedad: </h3></td>
+                                    <td><h3><span class="badge bg-danger">{{ resultado.identificacion.enfermedad.nombre }}</span></h3></td>
+                                </tr>
+                            </table>
+
+            
+                            
+                        </center>
+                            <hr>
                             <h3 class="mb-0"><strong>Descripción</strong></h3>
                             <h4 class="mb-0">{{ resultado.identificacion.enfermedad.descripcion }}</h4>
-                        </center>
+                    
                     </div>
 
                 </div>

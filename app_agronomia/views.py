@@ -34,6 +34,34 @@ def inicio(request):
 
 
 
+def plantas_entrenadas(request):
+        
+        lista_plantas = []
+        query_lista_plantas = CargaEntrenamiento.objects.values('id_planta').distinct()
+        
+        for planta in query_lista_plantas:
+                plant = Planta.objects.get(pk=planta['id_planta'])
+                detalle = DetalleEntrenamiento.objects.filter(id_carga_entrenamiento__id_planta=plant.pk).values()[:1]
+                
+                with open(detalle[0]['url'], "rb") as image_file:
+                        img64 = base64.b64encode(image_file.read())        
+                        img64 = img64.decode('utf-8')
+                
+                
+                lista_plantas.append(
+                        {
+                        'id': plant.pk,
+                        'nombre': plant.nombre,
+                        'descripcion': plant.descripcion,
+                        'img64': img64       
+                        }
+                )
+                
+        #lista_plantas = CargaEntrenamiento.objects.annotate('id_planta')
+        #print(lista_plantas)                
+        data = {'resultado':lista_plantas,}
+        return render(request, 'plantas_entrenadas.html',data)
+
 
 
 
@@ -41,6 +69,7 @@ def identificar_enfermedad(photo):
         msg = ''
         text = ''
         enfermedad = ''
+        imagen_cargada = ''
         try:
                 myfile = photo.read()
                 image = cv2.imdecode(np.frombuffer(myfile, np.uint8), cv2.IMREAD_UNCHANGED)
@@ -71,8 +100,14 @@ def identificar_enfermedad(photo):
                 
                 carga = CargaEntrenamiento.objects.get(pk=int(text.split("_")[0]))
                 detalle = DetalleEntrenamiento.objects.filter(id_carga_entrenamiento=carga.pk).values()[:1]
-                
                 planta = Planta.objects.get(pk=carga.id_planta.pk)
+                
+                
+                
+                
+                imagen_cargada = base64.b64encode(myfile).decode('utf-8')
+                
+                #imagen_cargada = base64.b64encode(image).decode('utf-8')
                 
                 if "hoja_sana" in text:
                         msg = "hoja_sana"
@@ -91,10 +126,10 @@ def identificar_enfermedad(photo):
                 
         except Exception as e:
                 msg = 'Error: ' + str(e)
-                print(msg)
+                #print(msg)
 
         return {'tipo_hoja': planta.nombre, 'estado_hoja': msg,'planta':planta,
-                'enfermedad':enfermedad, 'img64': img64 }
+                'enfermedad':enfermedad, 'img64': img64, 'imagen_cargada': imagen_cargada }
 
 
 
