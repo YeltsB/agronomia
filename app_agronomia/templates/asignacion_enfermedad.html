@@ -102,7 +102,7 @@
                                 <div class="col-md-12">
                                     <label for="formFile" class="form-label">Descripción</label>
                                     <textarea name="descripcion_planta" class="form-control"
-                                        id="descripcion_planta" rows="3"></textarea>
+                                        id="descripcion_planta" rows="5"></textarea>
                                 </div>
                             </div>
 
@@ -151,7 +151,7 @@
                             <div class="col-md-12">
                                 <label for="formFile" class="form-label">Descripción</label>
                                 <textarea name="descripcion_enfermedad" class="form-control"
-                                    id="descripcion_enfermedad" rows="3"></textarea>
+                                    id="descripcion_enfermedad" rows="5"></textarea>
                             </div>
                         </div>
                     </div>
@@ -245,11 +245,21 @@
                     language: { "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json" }
                 });
 
+
                 if("{{ estatus }}" != "False"){
                     Swal.fire({
                         title: 'Notificación',
                         text: `Datos guardados con éxito`,
                         icon: 'success',
+                        confirmButtonColor: '#14A44D'
+                    });
+                }
+
+                if("{{ error_validacion }}" != "None"){
+                    Swal.fire({
+                        title: 'Notificación',
+                        text: "{{error_validacion}}",
+                        icon: 'error',
                         confirmButtonColor: '#14A44D'
                     });
                 }

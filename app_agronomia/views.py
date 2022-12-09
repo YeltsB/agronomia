@@ -24,10 +24,13 @@ def inicio(request):
                 if request.FILES.get('imagen') == None:
                         validacion = 'Debe cargar la imagen'
                 else:
-                        ret_data['identificacion'] = identificar_enfermedad(request.FILES.get("imagen"))
-                        
-                        
+                        if len(obtener_sub_carpetas()) > 0:
+                                ret_data['identificacion'] = identificar_enfermedad(request.FILES.get("imagen"))
+                                
+                        else:
+                                ret_data['validacion_entrenamiento'] = 'Conjunto de datos vacío. Por favor, entrene al menos 1 conjunto.'
 
+                        
         data = {'resultado':ret_data, 'validacion': validacion,
                 'sub_carpetas': obtener_sub_carpetas(),}
         return render(request, 'inicio.html',data)
@@ -163,9 +166,12 @@ def entrenamiento(request):
                 else:
                         imagenes = request.FILES.getlist('imagenes')
                         
+                if request.POST.get("planta_select") == None:
+                        ret_data['validacion_planta'] = 'Debe seleccionar la planta'
+                else:
+                        planta = Planta.objects.get(pk=request.POST.get("planta_select"))
+                        query_entrenamiento['id_planta']  = planta
                         
-                planta = Planta.objects.get(pk=request.POST.get("planta_select"))
-                query_entrenamiento['id_planta']  = planta
                      
                 if request.POST.get("salud") == '1':
                         estado_hoja = "hoja_sana"
@@ -185,7 +191,7 @@ def entrenamiento(request):
                         
                      
                                 
-                if 'validacion_archivo' not in ret_data  and 'validacion_enfermedad' not in ret_data:
+                if 'validacion_archivo' not in ret_data  and 'validacion_enfermedad' not in ret_data and 'validacion_planta' not in ret_data:
                         carga = CargaEntrenamiento(**query_entrenamiento)
                         carga.save()
                         cadena = str(carga.pk) + '_' + planta.nombre.lower() + '_' + estado_hoja   
@@ -291,12 +297,15 @@ def asignacion_enfermedad(request):
         except Exception as e:
                 status = False
                 
+                
+                
                         
         data = {'lista_planta':lista_planta, 'lista_enfermedad':lista_enfermedad,
                 'lista_asigancion':lista_asigancion, 'lista_entrenamiento':lista_entrenamiento,
-                'estatus':status}
+                'estatus':status,'error_validacion' : request.session.get('error_validacion')}
         
         request.session['estado_request'] = None 
+        request.session['error_validacion'] = None 
         return render(request, 'asignacion_enfermedad.html',data)  
         
  #==============================POST==================================================# 
@@ -304,14 +313,19 @@ def asignacion_enfermedad(request):
 def post_planta(request):
         query_planta = {}
         request.session['estado_request'] = False 
+        request.session['error_validacion'] = None
 
-                
         if request.method == 'POST':
-                query_planta['nombre'] = request.POST.get("nombre_planta")
-                query_planta['descripcion'] = request.POST.get("descripcion_planta")
-                planta = Planta(**query_planta)
-                planta.save()
-                request.session['estado_request'] = True 
+                
+                if request.POST.get("nombre_planta") == "" or request.POST.get("descripcion_planta") == "":
+                        request.session['error_validacion'] = "Campos obligatorios para nombre y descripción"
+                else:
+                        query_planta['nombre'] = request.POST.get("nombre_planta")
+                        query_planta['descripcion'] = request.POST.get("descripcion_planta")
+                        planta = Planta(**query_planta)
+                        planta.save()
+                        request.session['estado_request'] = True
+                        request.session['error_validacion'] = None
 
                         
         #data = {'estatus':estado_request}
@@ -322,14 +336,19 @@ def post_planta(request):
 def post_enfermedad(request):
         query_enfermedad = {}
         request.session['estado_request'] = False 
+        request.session['error_validacion'] = None
 
                 
         if request.method == 'POST':
-                query_enfermedad['nombre'] = request.POST.get("nombre_enfermedad")
-                query_enfermedad['descripcion'] = request.POST.get("descripcion_enfermedad")
-                enfermedad = Enfermedad(**query_enfermedad)
-                enfermedad.save()
-                request.session['estado_request'] = True 
+                if request.POST.get("nombre_enfermedad") == "" or request.POST.get("descripcion_enfermedad") == "":
+                        request.session['error_validacion'] = "Campos obligatorios para nombre y descripción"
+                else:
+                        query_enfermedad['nombre'] = request.POST.get("nombre_enfermedad")
+                        query_enfermedad['descripcion'] = request.POST.get("descripcion_enfermedad")
+                        enfermedad = Enfermedad(**query_enfermedad)
+                        enfermedad.save()
+                        request.session['estado_request'] = True 
+                        request.session['error_validacion'] = None
 
                         
         #data = {'estatus':estado_request}
@@ -341,17 +360,20 @@ def post_enfermedad(request):
 def post_asignacion(request):
         query_asignacion = {}
         request.session['estado_request'] = False 
+        request.session['error_validacion'] = None
                
         if request.method == 'POST':
-                query_asignacion['id_planta'] = Planta.objects.get(pk=request.POST.get("planta_select"))
-                query_asignacion['id_enfermedad'] = Enfermedad.objects.get(pk=request.POST.get("enfermedad_select"))
-       
-                #if request.POST.get("estado_select") == "2":
+                if request.POST.get("planta_select") == None or request.POST.get("enfermedad_select") == None:
+                        request.session['error_validacion'] = "Debe seleccionar la planta y su enfermedad para el registro"
+                else:
+                        query_asignacion['id_planta'] = Planta.objects.get(pk=request.POST.get("planta_select"))
+                        query_asignacion['id_enfermedad'] = Enfermedad.objects.get(pk=request.POST.get("enfermedad_select"))
 
-
-                asignacion = PlantaEnfermedad(**query_asignacion)
-                asignacion.save()
-                request.session['estado_request'] = True
+                        asignacion = PlantaEnfermedad(**query_asignacion)
+                        asignacion.save()
+                        request.session['estado_request'] = True
+                        request.session['error_validacion'] = None
+                        
                 
                 
         #data = {'estatus':estado_request}
