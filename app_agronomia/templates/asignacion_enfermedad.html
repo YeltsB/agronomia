@@ -38,35 +38,35 @@
         </div>
 
         <div class="container pt-5">
-
-            <table id="example" class="table table-striped " style="width:100%">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Planta</th>
-                        <th>Enfermedad</th>
-                        <th>Entrenamiento</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    {% for asignacion in lista_asigancion %}
+            <div class="table-responsive">
+                <table id="example" class="table table-striped table-hover" style="width:100%">
+                    <thead>
                         <tr>
-                            <td>{{ asignacion.pk }}</td>
-                            <td>{{ asignacion.id_planta.nombre }}</td>
-                            <td>{{ asignacion.id_enfermedad.nombre }}</td>
-                            
-                            <td>
-                                
-                            </td>
+                            <th>ID</th>
+                            <th>Planta</th>
+                            <th>Enfermedad</th>
+                            <th>Entrenamiento</th>
                         </tr>
-                    {% endfor %}
+                    </thead>
+                    <tbody>
+
+                        {% for asignacion in lista_asigancion %}
+                            <tr>
+                                <td>{{ asignacion.pk }}</td>
+                                <td>{{ asignacion.id_planta.nombre }}</td>
+                                <td>{{ asignacion.id_enfermedad.nombre }}</td>
+                                
+                                <td>
+                                    
+                                </td>
+                            </tr>
+                        {% endfor %}
 
 
-                </tbody>
+                    </tbody>
 
-            </table>
-
+                </table>
+            </div>
         </div>
 <!-- 
         <form method="POST" action="{% url 'app_agronomia:entrenamiento' %}" onsubmit="btn_enviar.disabled = true; return true;">
