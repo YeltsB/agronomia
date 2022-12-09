@@ -38,8 +38,16 @@
                 <div class="col-md-6">
 
                     <div class="mb-3 mt-4">
-                        <label for="formFile" class="form-label">Ingrese el nombre de la planta (Sin acento)</label>
-                        <input class="form-control" type="text" id="nombre" name="nombre" placeholder="Ejemplo: Fresa">
+                        <label for="formFile" class="form-label"><strong>Seleccione la Planta</strong></label>
+                        <!-- <input class="form-control" type="text" id="nombre" name="nombre" placeholder="Ejemplo: Fresa"> -->
+                        <select name="planta_select" id="planta_select" class="form-control">
+
+                            {% for planta in lista_planta %}
+                                <option value="{{planta.pk}}">{{planta.nombre}}</option>
+                            {% endfor %}
+
+                        </select>
+
                 
                         {% if data.validacion_nombre %}
                             <div class="alert alert-danger mt-2" role="alert">
@@ -51,21 +59,26 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3 mt-4">
-                        <label for="formFile" class="form-label">Seleccione la salud de su hoja</label>
+                        <label for="formFile" class="form-label"><strong>Seleccione la salud de su hoja</strong></label>
                         <select name="salud" id="salud" class="form-control">
                             <option value="1">Saludable</option>
                             <option value="2">Enferma</option>
                         </select>
-                
-
                     </div>
                 </div>
                 
             </div>
+            <div class="row">
+                <div class="col-md-6" id="contenedor_enfermedad" style="display: none;" >
+                    <label for="formFile" class="form-label"><strong>Seleccione el tipo de enfermedad de la planta</strong></label>
+                    <select name="enfermedad_select" id="enfermedad_select" class="form-control">
+                    </select>
+                </div>
+            </div>
 
             <div class="row">
                 <div class="mb-3 mt-2">
-                    <label for="formFile" class="form-label">Seleccione las imágenes</label>
+                    <label for="formFile" class="form-label"><strong>Seleccione las imágenes</strong></label>
                     <input class="form-control" type="file" id="imagenes" name="imagenes" multiple accept=".jpg">
             
                     {% if data.validacion_archivo %}
@@ -89,7 +102,23 @@
 
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script>
+       $(document).ready(function () {
+
+            $('#salud').change(function () {
+
+                if ($(this).val() == "2") {
+                    $("#contenedor_enfermedad").show("slow");
+                }else{
+                    $("#contenedor_enfermedad").hide("slow");
+                }
+
+            });
+
+        });
+   
+ 
 
     </script>
 {% endblock content %}

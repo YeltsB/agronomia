@@ -94,9 +94,12 @@ def obtener_sub_carpetas():
 
 def entrenamiento(request):
         msg = ""
-        nombre = ""
+        planta = ""
+        enfermedad = ""
+        
         estado_hoja = ""
         cadena = ""
+        lista_planta = Planta.objects.all()
         
         ret_data = {}
         if request.method == 'POST':
@@ -106,26 +109,30 @@ def entrenamiento(request):
                 else:
                         imagenes = request.FILES.getlist('imagenes')
                         
-                if request.POST.get("nombre") == '':
-                        ret_data['validacion_nombre'] = 'Debe ingresar el nombre de la planta'
-                else:
-                        nombre = request.POST.get("nombre").lower()
+                # if request.POST.get("nombre") == '':
+                #         ret_data['validacion_nombre'] = 'Debe ingresar el nombre de la planta'
+                # else:
+                #         nombre = request.POST.get("nombre").lower()
                         
-                        
+                planta = Planta.objects.get(pk=request.POST.get("planta_select"))
+                  
+                     
                 if request.POST.get("salud") == '1':
                         estado_hoja = "hoja_sana"
                 else:
                         estado_hoja = "hoja_enferma"
+                        enfermedad = Enfermedad.objects.get(pk=request.POST.get("enfermedad_select"))
+                        
 
                                 
-                cadena = nombre + '_' + estado_hoja   
-                
-
-                if 'validacion_archivo' not in ret_data  and 'validacion_nombre' not in ret_data:
+                                
+                                
+                cadena = planta.nombre + '_' + estado_hoja   
+                if 'validacion_archivo' not in ret_data:
                         ret_data['status'] = entranamiento_tensorflow(cadena,imagenes)
 
                 
-        data = {'data':ret_data}
+        data = {'data':ret_data, 'lista_planta': lista_planta}
         return render(request, 'entrenamiento.html',data)
 
 
@@ -210,11 +217,14 @@ def asignacion_enfermedad(request):
         
         
         
-        
-        if request.session.get('estado_request') == None:
+        try:
+                if request.session.get('estado_request') == None:
+                        status = False
+                else:
+                        status = request.session.get('estado_request')  
+        except Exception as e:
                 status = False
-        else:
-                status = request.session.get('estado_request')
+                
                         
         data = {'lista_planta':lista_planta, 'lista_enfermedad':lista_enfermedad,
                 'lista_asigancion':lista_asigancion, 'lista_entrenamiento':lista_entrenamiento,
