@@ -59,7 +59,7 @@ def identificar_enfermedad(photo):
                 #Obtenemos las clases del conjuto de datos
                 class_names = train_ds.class_names
                 print(class_names)
-                model = load_model('C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/my_h5_model.h5')
+                model = load_model('C:/Users/yeltsinbaquedano82/Desktop/agronomia-desarrollo/app_agronomia/IA/my_h5_model.h5')
                 
                 img_array = tf.keras.utils.img_to_array(img)
                 img_array = tf.expand_dims(img_array, 0) # Create a batch
@@ -100,7 +100,7 @@ def identificar_enfermedad(photo):
 
 def obtener_sub_carpetas():
         try:                
-                carpeta = 'C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/Cultivo'               
+                carpeta = 'C:/Users/yeltsinbaquedano82/Desktop/agronomia-desarrollo/app_agronomia/IA/Cultivo'               
                 sub_carpetas = [name for name in os.listdir(carpeta) if os.path.isdir(os.path.join(carpeta, name))]
         except Exception as e:
                 sub_carpetas = 'Error al obtener las carpetas'
@@ -165,7 +165,7 @@ def entrenamiento(request):
 def entranamiento_tensorflow(cadena,imagenes,carga):
         status = True
         try:
-                directorio = "C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/Cultivo/"+cadena
+                directorio = "C:/Users/yeltsinbaquedano82/Desktop/agronomia-desarrollo/app_agronomia/IA/Cultivo/"+cadena
                 os.mkdir(directorio)
                 
                 for img in imagenes:
@@ -180,8 +180,8 @@ def entranamiento_tensorflow(cadena,imagenes,carga):
                                         
                                         
                                         
-                if os.path.exists("C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/my_h5_model.h5"):
-                        os.remove('C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/my_h5_model.h5') 
+                if os.path.exists("C:/Users/yeltsinbaquedano82/Desktop/agronomia-desarrollo/app_agronomia/IA/my_h5_model.h5"):
+                        os.remove('C:/Users/yeltsinbaquedano82/Desktop/agronomia-desarrollo/app_agronomia/IA/my_h5_model.h5') 
                         
                                              
                 train_ds = tf.keras.utils.image_dataset_from_directory(
@@ -229,8 +229,8 @@ def entranamiento_tensorflow(cadena,imagenes,carga):
                 epochs=epochs
                 )
 
-                model.save("C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/my_h5_model.h5")
-                
+                model.save("C:/Users/yeltsinbaquedano82/Desktop/agronomia-desarrollo/app_agronomia/IA/my_h5_model.h5")
+
                 
                 status = True
         except Exception as e:
