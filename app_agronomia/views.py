@@ -34,6 +34,34 @@ def inicio(request):
 
 
 
+def plantas_entrenadas(request):
+        
+        lista_plantas = []
+        query_lista_plantas = CargaEntrenamiento.objects.values('id_planta').distinct()
+        
+        for planta in query_lista_plantas:
+                plant = Planta.objects.get(pk=planta['id_planta'])
+                detalle = DetalleEntrenamiento.objects.filter(id_carga_entrenamiento__id_planta=plant.pk).values()[:1]
+                
+                with open(detalle[0]['url'], "rb") as image_file:
+                        img64 = base64.b64encode(image_file.read())        
+                        img64 = img64.decode('utf-8')
+                
+                
+                lista_plantas.append(
+                        {
+                        'id': plant.pk,
+                        'nombre': plant.nombre,
+                        'descripcion': plant.descripcion,
+                        'img64': img64       
+                        }
+                )
+                
+        #lista_plantas = CargaEntrenamiento.objects.annotate('id_planta')
+        #print(lista_plantas)                
+        data = {'resultado':lista_plantas,}
+        return render(request, 'plantas_entrenadas.html',data)
+
 
 
 

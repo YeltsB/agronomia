@@ -10,5 +10,7 @@ urlpatterns = [
     path("post_planta", post_planta, name="post_planta"),
     path("post_enfermedad", post_enfermedad, name="post_enfermedad"),
     path("post_asignacion", post_asignacion, name="post_asignacion"),
-    path("post_cbo_enfermedades", post_cbo_enfermedades, name="post_cbo_enfermedades")
+    path("post_cbo_enfermedades", post_cbo_enfermedades, name="post_cbo_enfermedades"),
+    path("plantas_entrenadas", plantas_entrenadas, name="plantas_entrenadas")
+    
 ]
