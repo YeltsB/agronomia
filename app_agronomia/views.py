@@ -1,3 +1,4 @@
+import base64
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 import cv2
@@ -39,6 +40,7 @@ def inicio(request):
 def identificar_enfermedad(photo):
         msg = ''
         text = ''
+        enfermedad = ''
         try:
                 myfile = photo.read()
                 image = cv2.imdecode(np.frombuffer(myfile, np.uint8), cv2.IMREAD_UNCHANGED)
@@ -66,19 +68,33 @@ def identificar_enfermedad(photo):
                 score = tf.nn.softmax(predictions[0])
                 text = class_names[np.argmax(score)]
                 
+                
+                carga = CargaEntrenamiento.objects.get(pk=int(text.split("_")[0]))
+                detalle = DetalleEntrenamiento.objects.filter(id_carga_entrenamiento=carga.pk).values()[:1]
+                
+                planta = Planta.objects.get(pk=carga.id_planta.pk)
+                
                 if "hoja_sana" in text:
                         msg = "hoja_sana"
+                        detalle = DetalleEntrenamiento.objects.filter(id_carga_entrenamiento=carga.pk).values()[:1]
                 else:
                         msg = "hoja_enferma"
-        
-
+                        enfermedad = Enfermedad.objects.get(pk=carga.id_enfermedad.pk)
+                        
+                        
+                        
+                with open(detalle[0]['url'], "rb") as image_file:
+                        img64 = base64.b64encode(image_file.read())        
+                        img64 = img64.decode('utf-8')
+                        
                 msg = msg
                 
         except Exception as e:
                 msg = 'Error: ' + str(e)
-                #print(text)
+                print(msg)
 
-        return {'tipo_hoja': text.split("_")[1].capitalize(), 'estado_hoja': msg}
+        return {'tipo_hoja': planta.nombre, 'estado_hoja': msg,'planta':planta,
+                'enfermedad':enfermedad, 'img64': img64 }
 
 
 

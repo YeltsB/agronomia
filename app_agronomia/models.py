@@ -49,6 +49,6 @@ class DetalleEntrenamiento(models.Model):
     url = models.CharField(max_length=250)
         
     def __str__(self):
-        return "{}--{}".format(self.pk,self.id_carga_entrenamiento)
+        return "{}--{}--{}".format(self.pk,self.id_carga_entrenamiento,self.url)
 
         

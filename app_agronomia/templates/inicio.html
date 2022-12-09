@@ -41,11 +41,42 @@
             <h4 class="alert-heading"><strong>RESULTADO: {{ resultado.identificacion.tipo_hoja }}</strong></h4>
             <hr>
 
-                {% if resultado.identificacion.estado_hoja == 'hoja_sana'   %} 
-                    <p class="mb-0"><span class="badge bg-success">La hoja que ha cargado esta sana</span></p>
+                {% if resultado.identificacion.estado_hoja == 'hoja_sana'   %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <center>
+                            <img src="data:image/jpg;base64,{{ resultado.identificacion.img64 }}" class="img-fluid" alt="salud"/>
+                        </center>
+                    </div>
+                    <div class="col-md-6">
+                        <center>
+                            <h3 class="mb-0">Estado de la planta: <span class="badge bg-success">Saludable</span></h3>
+                            <h3 class="mb-0"><strong>Descripción</strong></h3>
+                            <h4 class="mb-0">{{ resultado.identificacion.planta.descripcion }}</h4>
+                        </center>
+                    </div>
+                </div>
+
+
 
                 {% elif resultado.identificacion.estado_hoja == 'hoja_enferma' %}
-                    <p class="mb-0"><span class="badge bg-danger">La hoja que ha cargado esta enferma</span></p>
+                <div class="row ">
+                    <div class="col-md-6">
+                        <center>
+                            <img src="data:image/jpg;base64,{{ resultado.identificacion.img64 }}" class="img-fluid" alt="enferma"/>
+                        </center>
+                    </div>
+                    <div class="col-md-6">
+                        <center>
+                            <h3 class="mb-0">Estado de la planta: <span class="badge bg-danger">Enferma</span></h3>
+                            <h3 class="mb-0">Enfermedad: <span class="badge bg-danger">{{ resultado.identificacion.enfermedad.nombre }}</span></h3>
+                            <h3 class="mb-0"><strong>Descripción</strong></h3>
+                            <h4 class="mb-0">{{ resultado.identificacion.enfermedad.descripcion }}</h4>
+                        </center>
+                    </div>
+
+                </div>
 
                 {% else %}
                     <p class="mb-0"><span class="badge bg-secondary">Imagen no cargada</span></p>
