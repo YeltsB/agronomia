@@ -73,9 +73,20 @@
                     <label for="formFile" class="form-label"><strong>Seleccione el tipo de enfermedad de la planta</strong></label>
                     <select name="enfermedad_select" id="enfermedad_select" class="form-control">
                     </select>
-                </div>
-            </div>
 
+     
+
+                </div>
+
+                {% if data.validacion_enfermedad %}
+                    <div class="col-md-6 validate_enfermedad">
+                        <div class="alert alert-danger mt-2" role="alert">
+                            <strong>Error: </strong> {{ data.validacion_enfermedad }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            
             <div class="row">
                 <div class="mb-3 mt-2">
                     <label for="formFile" class="form-label"><strong>Seleccione las imágenes</strong></label>
@@ -103,6 +114,8 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
        $(document).ready(function () {
 
@@ -110,15 +123,58 @@
 
                 if ($(this).val() == "2") {
                     $("#contenedor_enfermedad").show("slow");
+                    
+                    $(".validate_enfermedad").hide();
+                    CargarEnfermedades($('#planta_select').val());
                 }else{
                     $("#contenedor_enfermedad").hide("slow");
                 }
 
             });
 
+            $('#planta_select').change(function () {
+
+                if ($('#salud').val() == "2") {
+                    CargarEnfermedades($(this).val());                    
+                }    
+               
+            });
+
         });
    
- 
+        function CargarEnfermedades(id_planta) {
+            
+            $.ajax({
+            url: "{% url 'app_agronomia:post_cbo_enfermedades' %}",
+            type: "POST",
+            data: {
+                'id_planta':id_planta,
+                'csrfmiddlewaretoken': $("input[name=csrfmiddlewaretoken]").val()
+            },
+            }).done(function (data) { //Cuando todo salió en orden
+                $('#enfermedad_select').empty();
+                
+                if (data.resp.length > 0) {
+
+                    $.each(data.resp, function () {
+                        $("#enfermedad_select").append("<option value=" + this.id + ">" + this.text + "</option>");
+                    });
+
+                }else{
+                    
+                    Swal.fire({
+                        title: 'Notificación',
+                        text: `La planta seleccionada no tiene ninguna enfermedad asignada`,
+                        icon: 'warning',
+                        confirmButtonColor: '#14A44D'
+                    });
+                }
+
+            }).fail(function (data) { //Cuando se recibe un error
+                $('#enfermedad_select').empty();
+                alert('Error al cargar las enfermedades');
+            });
+        }
 
     </script>
 {% endblock content %}

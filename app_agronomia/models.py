@@ -32,7 +32,7 @@ class PlantaEnfermedad(models.Model):
         verbose_name_plural = "Plantas Efermedades"
         
     def __str__(self):
-        return "{}--{}".format(self.pk,self.id_planta)
+        return "{}--{}--{}".format(self.pk,self.id_enfermedad,self.id_enfermedad.nombre)
 
     
 class CargaEntrenamiento(models.Model):

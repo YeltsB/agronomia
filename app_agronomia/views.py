@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 import cv2
 import numpy as np
@@ -77,7 +78,7 @@ def identificar_enfermedad(photo):
                 msg = 'Error: ' + str(e)
                 #print(text)
 
-        return {'tipo_hoja': text.split("_")[0].capitalize(), 'estado_hoja': msg}
+        return {'tipo_hoja': text.split("_")[1].capitalize(), 'estado_hoja': msg}
 
 
 
@@ -96,48 +97,56 @@ def entrenamiento(request):
         msg = ""
         planta = ""
         enfermedad = ""
-        
         estado_hoja = ""
         cadena = ""
         lista_planta = Planta.objects.all()
         
         ret_data = {}
+        query_entrenamiento = {}
+        
+        
         if request.method == 'POST':
                 
-                if request.FILES.getlist('imagenes') == None:
+                if len(request.FILES.getlist('imagenes')) == 0:
                         ret_data['validacion_archivo'] = 'Debe cargar el conjunto de datos de su planta'
                 else:
                         imagenes = request.FILES.getlist('imagenes')
                         
-                # if request.POST.get("nombre") == '':
-                #         ret_data['validacion_nombre'] = 'Debe ingresar el nombre de la planta'
-                # else:
-                #         nombre = request.POST.get("nombre").lower()
                         
                 planta = Planta.objects.get(pk=request.POST.get("planta_select"))
-                  
+                query_entrenamiento['id_planta']  = planta
                      
                 if request.POST.get("salud") == '1':
                         estado_hoja = "hoja_sana"
+                        query_entrenamiento['id_enfermedad'] = None
+                        query_entrenamiento['esta_sana'] = True
                 else:
                         estado_hoja = "hoja_enferma"
-                        enfermedad = Enfermedad.objects.get(pk=request.POST.get("enfermedad_select"))
+                        if request.POST.get("enfermedad_select") == None:
+                                ret_data['validacion_enfermedad'] = 'Debe selecionar una enfermedad'
+                        else:
+                                enfermedad = Enfermedad.objects.get(pk=request.POST.get("enfermedad_select"))
+                                query_entrenamiento['id_enfermedad'] = enfermedad
+                                query_entrenamiento['esta_sana'] = False
+                                
+                                
+
                         
+                     
+                                
+                if 'validacion_archivo' not in ret_data  and 'validacion_enfermedad' not in ret_data:
+                        carga = CargaEntrenamiento(**query_entrenamiento)
+                        carga.save()
+                        cadena = str(carga.pk) + '_' + planta.nombre.lower() + '_' + estado_hoja   
+                        ret_data['status'] = entranamiento_tensorflow(cadena,imagenes,carga)
 
-                                
-                                
-                                
-                cadena = planta.nombre + '_' + estado_hoja   
-                if 'validacion_archivo' not in ret_data:
-                        ret_data['status'] = entranamiento_tensorflow(cadena,imagenes)
-
-                
+           
         data = {'data':ret_data, 'lista_planta': lista_planta}
         return render(request, 'entrenamiento.html',data)
 
 
 
-def entranamiento_tensorflow(cadena,imagenes):
+def entranamiento_tensorflow(cadena,imagenes,carga):
         status = True
         try:
                 directorio = "C:/Users/Yeltsin/Desktop/Proyecto Agronomia/agronomia/app_agronomia/IA/Cultivo/"+cadena
@@ -147,6 +156,11 @@ def entranamiento_tensorflow(cadena,imagenes):
                         with open(directorio +'/'+ str(img), 'wb') as dest:
                                 for chunk in img.chunks():
                                         dest.write(chunk)
+                                        
+                        detalle = DetalleEntrenamiento(id_carga_entrenamiento=carga, url=directorio + '/' +  str(img))
+                        detalle.save()             
+
+                                        
                                         
                                         
                                         
@@ -205,6 +219,7 @@ def entranamiento_tensorflow(cadena,imagenes):
                 status = True
         except Exception as e:
                 status = False
+                print(e)
 
         return status
         
@@ -290,4 +305,28 @@ def post_asignacion(request):
                 
         #data = {'estatus':estado_request}
         return redirect('/asignacion_enfermedad')
+
+
+def post_cbo_enfermedades(request):
+        list_enfermedades = []
+        
+        if request.is_ajax():
+                try:
+                        id_planta = request.POST.get('id_planta')
+                        enfermedades =  PlantaEnfermedad.objects.filter(id_planta=id_planta).values()
+
+                        for enfermedad in enfermedades:
+                                enfer = Enfermedad.objects.get(pk=enfermedad['id'])
+                                list_enfermedades.append(
+                                        {
+                                        'id': enfer.pk,
+                                        'text': enfer.nombre      
+                                        }
+                                )
+                                #print(str(enfer.pk) + enfer.nombre)
+                except Exception as e:
+                        list_enfermedades = []
+        
+        data = {'resp':list_enfermedades}           
+        return JsonResponse(data,safe=False)
   

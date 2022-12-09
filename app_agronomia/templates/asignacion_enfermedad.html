@@ -247,11 +247,12 @@
                 });
 
                 if("{{ estatus }}" != "False"){
-                    Swal.fire(
-                        'Notificación',
-                        `Datos guardados con éxito`,
-                        'success'
-                    );
+                    Swal.fire({
+                        title: 'Notificación',
+                        text: `Datos guardados con éxito`,
+                        icon: 'success',
+                        confirmButtonColor: '#14A44D'
+                    });
                 }
                 
             });
