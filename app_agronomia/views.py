@@ -326,7 +326,7 @@ def post_asignacion(request):
 def post_cbo_enfermedades(request):
         list_enfermedades = []
         
-        if request.is_ajax():
+        if is_ajax(request=request):
                 try:
                         id_planta = request.POST.get('id_planta')
                         enfermedades =  PlantaEnfermedad.objects.filter(id_planta=id_planta).values()
@@ -345,4 +345,6 @@ def post_cbo_enfermedades(request):
         
         data = {'resp':list_enfermedades}           
         return JsonResponse(data,safe=False)
-  
+
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'  
