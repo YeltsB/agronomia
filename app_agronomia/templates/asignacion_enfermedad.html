@@ -7,13 +7,255 @@
 
 
 {% block content %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css">
+
+
     
+
     <div class="bg-light p-3 pt-5 rounded">
         <h1>Registro y visualización de enfermedades asignadas a plantas</h1>
         <p class="lead">Registre la información de las plantas, enfermedades y su relación.</p>
 
+        <div class="bd-example-snippet bd-code-snippet">
+            
+            <button type="button" class="btn btn-secondary" 
+                    data-bs-toggle="modal" data-bs-target="#modalPlanta">
+                <i class="fa-solid fa-plus"></i> Registro de plantas
+            </button>
+
+            <button type="button" class="btn btn-success" 
+            data-bs-toggle="modal" data-bs-target="#modalEnfermedad">
+            <i class="fa-solid fa-plus" ></i> 
+                Registro de enfermedad
+            </button>
+
+            <button type="button" class="btn btn-primary" 
+            data-bs-toggle="modal" data-bs-target="#modalAsignacion">
+            <i class="fa-solid fa-plus"></i> 
+                Asignación</button>
+
+        </div>
+
+        <div class="container pt-5">
+
+            <table id="example" class="table table-striped " style="width:100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Planta</th>
+                        <th>Enfermedad</th>
+                        <th>Entrenamiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    {% for asignacion in lista_asigancion %}
+                        <tr>
+                            <td>{{ asignacion.pk }}</td>
+                            <td>{{ asignacion.id_planta.nombre }}</td>
+                            <td>{{ asignacion.id_enfermedad.nombre }}</td>
+                            
+                            <td>
+                 
+                                
+                            </td>
+                        </tr>
+                    {% endfor %}
 
 
+                </tbody>
+
+            </table>
+
+        </div>
+<!-- 
+        <form method="POST" action="{% url 'app_agronomia:entrenamiento' %}" onsubmit="btn_enviar.disabled = true; return true;">
+        </form> -->
+
+        <!-- Inicio modal registro planta -->
+            <!-- Modal -->
+            <div class="modal fade" id="modalPlanta" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"><i class="fa-solid fa-plus"></i> Registro de plantas</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{% url 'app_agronomia:post_planta' %}" onsubmit="btn_enviar_planta.disabled = true; return true;">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-12">
+    
+                                    <label for="formFile" class="form-label">Ingrese el nombre de la planta</label>
+                                    <input class="form-control" type="text" id="nombre_planta" name="nombre_planta" placeholder="Ejemplo: Fresa">
+                            
+                                    <!-- {% if data.validacion_nombre %}
+                                        <div class="alert alert-danger mt-2" role="alert">
+                                        <strong>Error: </strong> {{ data.validacion_nombre }}
+                                        </div>
+                                    {% endif %} -->
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="formFile" class="form-label">Descripción</label>
+                                    <textarea name="descripcion_planta" class="form-control"
+                                        id="descripcion_planta" rows="3"></textarea>
+                                </div>
+                            </div>
+
+                    
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" id="btn_enviar_planta">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                    </div>
+                </form>
+                </div>
+                </div>
+            </div>
+        <!-- Fin modal registro planta -->
+
+
+        <!-- Inicio modal registro enfermedad -->
+            <!-- Modal -->
+            <div class="modal fade" id="modalEnfermedad" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"><i class="fa-solid fa-plus"></i> Registro de Enfermedades</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{% url 'app_agronomia:post_enfermedad' %}" onsubmit="btn_enviar_enfermedad.disabled = true; return true;">
+                            {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-12">
+ 
+                                <label for="formFile" class="form-label">Ingrese el nombre de la enfermedad</label>
+                                <input class="form-control" type="text" id="nombre_enfermedad" name="nombre_enfermedad" placeholder="Ejemplo: Hongo">
+                        
+                                <!-- {% if data.validacion_nombre %}
+                                    <div class="alert alert-danger mt-2" role="alert">
+                                    <strong>Error: </strong> {{ data.validacion_nombre }}
+                                    </div>
+                                {% endif %} -->
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="formFile" class="form-label">Descripción</label>
+                                <textarea name="descripcion_enfermedad" class="form-control"
+                                    id="descripcion_enfermedad" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" id="btn_enviar_enfermedad" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        </form>
+
+                    </div>
+                </div>
+                </div>
+            </div>
+        <!-- Fin modal registro enfermedad -->
+
+
+
+        
+        <!-- Inicio modal registro asignacion -->
+            <!-- Modal -->
+            <div class="modal fade" id="modalAsignacion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel"><i class="fa-solid fa-plus"></i> Registro de Asignación Planta-Enfermedad</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="{% url 'app_agronomia:post_asignacion' %}" onsubmit="btn_enviar_enfermedad.disabled = true; return true;">
+                            {% csrf_token %}
+
+                        <div class="row">
+                            <div class="col-md-12">
+ 
+                                <label for="formFile" class="form-label">Seleccione la Planta</label>
+                                <select name="planta_select" id="planta_select" name="planta_select" class="form-control">
+
+                                    {% for planta in lista_planta %}
+                                        <option value="{{planta.pk}}">{{planta.nombre}}</option>
+                                    {% endfor %}
+
+                                </select>
+                                <!-- {% if data.validacion_nombre %}
+                                    <div class="alert alert-danger mt-2" role="alert">
+                                    <strong>Error: </strong> {{ data.validacion_nombre }}
+                                    </div>
+                                {% endif %} -->
+                            </div>
+                        </div>
+                        <!-- <div class="row">
+                            <div class="col-md-12">
+                                <label for="formFile" class="form-label">Seleccione su Estado</label>
+                                <select  id="estado_select" name="estado_select" class="form-control">
+                                    <option value="1">Saludable</option>
+                                    <option value="2">Enferma</option>
+                                </select>
+                            </div>
+                        </div> -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="formFile" class="form-label">Seleccione la Enfermedad</label>
+                                <select  id="enfermedad_select" name="enfermedad_select" class="form-control">
+                                    
+                                    {% for enfermedad in lista_enfermedad %}
+                                        <option value="{{enfermedad.pk}}">{{enfermedad.nombre}}</option>
+                                    {% endfor %}
+
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+        <!-- Fin modal registro asignacion -->
+
+
+  
+
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            $(document).ready(function () {
+                $('#example').DataTable({
+                    language: { "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json" }
+                });
+
+                if("{{ estatus }}" != "False"){
+                    Swal.fire(
+                        'Notificación',
+                        `Datos guardados con éxito`,
+                        'success'
+                    );
+                }
+                
+            });
+        </script>
     </div>
 {% endblock content %}
 

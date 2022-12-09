@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.keras import layers
 from tensorflow.keras.models import Sequential
+from app_agronomia.models import *
 
 import os
 import patoolib
@@ -202,16 +203,81 @@ def entranamiento_tensorflow(cadena,imagenes):
         
         
 def asignacion_enfermedad(request):
-        ret_data = {}
-        validacion = ''
+        lista_planta = Planta.objects.all()
+        lista_enfermedad = Enfermedad.objects.all()
+        lista_asigancion = PlantaEnfermedad.objects.select_related('id_planta', 'id_enfermedad')
+        lista_entrenamiento = CargaEntrenamiento.objects.all()
         
-        if request.method == 'POST':
-                pass
+        
+        
+        
+        if request.session.get('estado_request') == None:
+                status = False
+        else:
+                status = request.session.get('estado_request')
                         
-        data = {'resultado':"ret_data"}
+        data = {'lista_planta':lista_planta, 'lista_enfermedad':lista_enfermedad,
+                'lista_asigancion':lista_asigancion, 'lista_entrenamiento':lista_entrenamiento,
+                'estatus':status}
+        
+        request.session['estado_request'] = None 
         return render(request, 'asignacion_enfermedad.html',data)  
         
  #==============================POST==================================================# 
  
- 
+def post_planta(request):
+        query_planta = {}
+        request.session['estado_request'] = False 
+
+                
+        if request.method == 'POST':
+                query_planta['nombre'] = request.POST.get("nombre_planta")
+                query_planta['descripcion'] = request.POST.get("descripcion_planta")
+                planta = Planta(**query_planta)
+                planta.save()
+                request.session['estado_request'] = True 
+
+                        
+        #data = {'estatus':estado_request}
+        return redirect('/asignacion_enfermedad')
+
+
+
+def post_enfermedad(request):
+        query_enfermedad = {}
+        request.session['estado_request'] = False 
+
+                
+        if request.method == 'POST':
+                query_enfermedad['nombre'] = request.POST.get("nombre_enfermedad")
+                query_enfermedad['descripcion'] = request.POST.get("descripcion_enfermedad")
+                enfermedad = Enfermedad(**query_enfermedad)
+                enfermedad.save()
+                request.session['estado_request'] = True 
+
+                        
+        #data = {'estatus':estado_request}
+        return redirect('/asignacion_enfermedad')
+
+
+
+
+def post_asignacion(request):
+        query_asignacion = {}
+        request.session['estado_request'] = False 
+               
+        if request.method == 'POST':
+                query_asignacion['id_planta'] = Planta.objects.get(pk=request.POST.get("planta_select"))
+                query_asignacion['id_enfermedad'] = Enfermedad.objects.get(pk=request.POST.get("enfermedad_select"))
        
+                #if request.POST.get("estado_select") == "2":
+
+
+                asignacion = PlantaEnfermedad(**query_asignacion)
+                asignacion.save()
+                request.session['estado_request'] = True
+                
+                
+        #data = {'estatus':estado_request}
+        return redirect('/asignacion_enfermedad')
+  
