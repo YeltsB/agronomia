@@ -36,6 +36,42 @@ def inicio(request):
         return render(request, 'inicio.html',data)
 
 
+def obtener_img_base64(img_url):
+        with open(img_url, "rb") as image_file:
+                img64 = base64.b64encode(image_file.read())        
+                img64 = img64.decode('utf-8')
+        return img64
+
+
+
+def detalle_galeria(request,id_planta):
+        planta = Planta.objects.get(pk=id_planta)
+        lista_carga = CargaEntrenamiento.objects.filter(id_planta=planta.pk)
+        listado_enfermedades = []
+        
+        data_carga_sana = []
+        data_carga_enferma = []
+        
+        
+        for carga in lista_carga:
+                detalles = DetalleEntrenamiento.objects.filter(id_carga_entrenamiento=carga.pk)
+                
+                for detalle in detalles:
+                        img64 = obtener_img_base64(detalle.url)
+                        
+                        if carga.esta_sana:        
+                                data_carga_sana.append({
+                                        'img64':img64
+                                })
+                        else:
+                                data_carga_enferma.append({
+                                        'img64':img64
+                                }) 
+        
+        data = {'planta':planta, 'data_carga_sana': data_carga_sana,
+                'data_carga_enferma':data_carga_enferma}
+        return render(request, 'detalle_galeria.html',data)
+
 
 def plantas_entrenadas(request):
         

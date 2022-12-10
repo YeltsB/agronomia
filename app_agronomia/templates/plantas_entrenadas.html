@@ -9,30 +9,32 @@
 {% block content %}
     
     <div class="bg-light p-3 pt-5 rounded">
-        <h1>Galería de etiquetas de Plantas agregadas</h1>
+        <center>
+            <h1>Galería de etiquetas de Plantas agregadas</h1>
+        </center>
         <br>
+        <div class="row">
+            {% for planta in resultado %}
 
-        {% for planta in resultado %}
-
-            <div class="col-md-4">
-                <div class="card" style="width: 18rem;">
-                    <img src="data:image/jpg;base64,{{ planta.img64 }}" class="img-fluid img-rounded" >
-                    <div class="card-body">
-                    <h5 class="card-title"><strong>{{ planta.nombre }}</strong></h5>
-                    <p class="card-text">{{ planta.descripcion }}</p>
-                    <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                <div class="col-md-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="data:image/jpg;base64,{{ planta.img64 }}" class="img-fluid img-rounded" >
+                        <div class="card-body">
+                        <h5 class="card-title"><strong>{{ planta.nombre }}</strong></h5>
+                        <p class="card-text">{{ planta.descripcion|safe|truncatewords:"10"|linebreaks }}</p>
+                        <a href="{% url 'app_agronomia:detalle_galeria' planta.id %}" class="btn btn-primary btn-sm">Ver galería</a>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </div>  
+                
+            {% empty %}
 
-        {% empty %}
-            <center>
-                <br><br>
-                <h2><strong>No hay ninguna planta entrenada</strong></h2>
-            </center>
-        {% endfor %}
-        
-
+                <center>
+                    <br><br>
+                    <h2><strong>No hay ninguna planta entrenada</strong></h2>
+                </center>
+            {% endfor %}
+        </div>
 
     </div>
 {% endblock content %}

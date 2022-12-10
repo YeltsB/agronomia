@@ -43,16 +43,20 @@
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{% url 'app_agronomia:inicio' %}">Inicio</a>
+                <a class="nav-link {% if request.path == '/' %} active {% endif %}" 
+                aria-current="page" href="{% url 'app_agronomia:inicio' %}">Inicio</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'app_agronomia:entrenamiento' %}">Entrenamiento</a>
+                <a class="nav-link {% if request.path == '/entrenamiento' %} active {% endif %}" 
+                href="{% url 'app_agronomia:entrenamiento' %}">Entrenamiento</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'app_agronomia:asignacion_enfermedad' %}">Asignación de Enfermedad</a>
+                <a class="nav-link {% if request.path == '/asignacion_enfermedad' %} active {% endif %}" 
+                href="{% url 'app_agronomia:asignacion_enfermedad' %}">Asignación de Enfermedad</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'app_agronomia:plantas_entrenadas' %}">Galería de Plantas Entrenadas</a>
+                <a class="nav-link {% if request.path == '/plantas_entrenadas' %} active {% endif %}" 
+                href="{% url 'app_agronomia:plantas_entrenadas' %}">Galería de Plantas Entrenadas</a>
               </li>
             </ul>
 
