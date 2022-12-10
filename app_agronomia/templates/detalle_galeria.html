@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+
+
+{% endblock head %}
+
+
+{% block content %}
+    
+    <div class="bg-light p-3 pt-5 rounded">
+        <center>
+            <h1>Galería de Planta {{ planta.nombre }}</h1>
+        </center>
+
+        <br>
+        <!-- <div class="alert alert-success mt-2" role="alert">
+            <strong>Lorem ipsum dolor sit amet consectetur adipisicing elit. N
+                on odio ea error praesentium ex, fuga doloremque voluptatum et incidunt 
+                placeat, culpa saepe. Culpa quo inventore exercitationem, accusantium excepturi ullam impedit?</strong> 
+        </div> -->
+        <nav>
+            <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
+              <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Planta Sana</button>
+              <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Planta Enferma</button>              
+            </div>
+        </nav>
+        <br><br>
+        <div class="tab-content" id="nav-tabContent">
+
+            <!-- Iinicio Planta Sana -->
+            <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+
+                <div class="row">
+                    {% for planta in data_carga_sana %}
+        
+                        <div class="col-md-4">
+                            <div class="card" style="width: 18rem;">
+                                <img src="data:image/jpg;base64,{{ planta.img64 }}" class="img-fluid img-rounded" >
+                            </div>
+                        </div>  
+                        
+                    {% empty %}
+        
+                        <center>
+                            <br><br>
+                            <h2><strong>No hay ninguna planta agregada</strong></h2>
+                        </center>
+                    {% endfor %}
+                </div>
+
+            </div>
+            <!-- Fin Planta Sana -->
+
+
+            <!-- Inicio Planta Enferma -->
+            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                
+                <div class="row">
+                    {% for planta in data_carga_enferma %}
+        
+                        <div class="col-md-4">
+                            <div class="card" style="width: 18rem;">
+                                <img src="data:image/jpg;base64,{{ planta.img64 }}" class="img-fluid img-rounded">
+                            </div>
+                        </div>  
+                        
+                    {% empty %}
+        
+                        <center>
+                            <br><br>
+                            <h2><strong>No hay ninguna planta agregada</strong></h2>
+                        </center>
+                    {% endfor %}
+                </div>
+
+            </div>
+            <!-- Inicio Planta Enferma -->
+
+        </div>
+          
+
+
+    </div>
+{% endblock content %}
+

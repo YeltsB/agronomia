@@ -22,7 +22,7 @@
                         <div class="card-body">
                         <h5 class="card-title"><strong>{{ planta.nombre }}</strong></h5>
                         <p class="card-text">{{ planta.descripcion|safe|truncatewords:"10"|linebreaks }}</p>
-                        <a href="#" class="btn btn-primary btn-sm">Ver galería</a>
+                        <a href="{% url 'app_agronomia:detalle_galeria' planta.id %}" class="btn btn-primary btn-sm">Ver galería</a>
                         </div>
                     </div>
                 </div>  
